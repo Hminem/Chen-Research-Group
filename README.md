@@ -4,16 +4,16 @@
 
 ## 技术栈
 
-| 类别 | 技术 | 版本 |
-|------|------|------|
-| 框架 | Next.js (App Router) | 16.x |
-| 前端 | React + Tailwind CSS + shadcn/ui | - |
-| 动效 | Framer Motion | - |
-| 图标 | Lucide React | - |
-| 数据库 | MySQL | 8.x |
-| ORM | Prisma | 7.x |
-| 认证 | NextAuth.js | - |
-| 语言 | TypeScript | 5.x |
+| 类别   | 技术                             | 版本 |
+| ------ | -------------------------------- | ---- |
+| 框架   | Next.js (App Router)             | 16.x |
+| 前端   | React + Tailwind CSS + shadcn/ui | -    |
+| 动效   | Framer Motion                    | -    |
+| 图标   | Lucide React                     | -    |
+| 数据库 | MySQL                            | 8.x  |
+| ORM    | Prisma                           | 7.x  |
+| 认证   | NextAuth.js                      | -    |
+| 语言   | TypeScript                       | 5.x  |
 
 ## 项目结构
 
@@ -103,6 +103,7 @@ winget install Oracle.MySQL
 ```
 
 安装后需要：
+
 1. 将 MySQL 添加到 PATH：`C:\Program Files\MySQL\MySQL Server 8.4\bin`
 2. 初始化数据库：`mysqld --initialize-insecure`
 3. 注册为 Windows 服务：`mysqld --install MySQL84`
@@ -145,31 +146,31 @@ npm run dev
 
 ### 核心表
 
-| 表名 | 说明 |
-|------|------|
-| `users` | 用户账号（登录、注册审核、角色） |
-| `members` | 成员展示信息 |
-| `publications` | 论文 |
-| `patents` | 专利 |
-| `software_copyrights` | 软件著作权 |
-| `awards` | 获奖记录 |
-| `algorithms` | 算法资源 |
-| `projects` | 科研项目 |
-| `project_progress` | 项目进展 |
-| `news` | 新闻动态 |
-| `site_settings` | 网站配置 |
-| `operation_logs` | 操作日志 |
+| 表名                    | 说明                             |
+| ----------------------- | -------------------------------- |
+| `users`               | 用户账号（登录、注册审核、角色） |
+| `members`             | 成员展示信息                     |
+| `publications`        | 论文                             |
+| `patents`             | 专利                             |
+| `software_copyrights` | 软件著作权                       |
+| `awards`              | 获奖记录                         |
+| `algorithms`          | 算法资源                         |
+| `projects`            | 科研项目                         |
+| `project_progress`    | 项目进展                         |
+| `news`                | 新闻动态                         |
+| `site_settings`       | 网站配置                         |
+| `operation_logs`      | 操作日志                         |
 
 ### 关联表
 
-| 表名 | 说明 |
-|------|------|
-| `project_members` | 项目-成员关联 |
+| 表名                     | 说明          |
+| ------------------------ | ------------- |
+| `project_members`      | 项目-成员关联 |
 | `project_publications` | 项目-论文关联 |
-| `project_patents` | 项目-专利关联 |
-| `project_copyrights` | 项目-软著关联 |
-| `project_awards` | 项目-获奖关联 |
-| `achievements` | 成果提交审核 |
+| `project_patents`      | 项目-专利关联 |
+| `project_copyrights`   | 项目-软著关联 |
+| `project_awards`       | 项目-获奖关联 |
+| `achievements`         | 成果提交审核  |
 
 ### 枚举类型
 
@@ -210,157 +211,157 @@ enum NewsCategory {
 
 ### 认证
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | `/api/auth/register` | 用户注册 |
+| 方法     | 路径                        | 说明          |
+| -------- | --------------------------- | ------------- |
+| POST     | `/api/auth/register`      | 用户注册      |
 | POST/GET | `/api/auth/[...nextauth]` | NextAuth 登录 |
 
 ### 成员
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/members` | 获取成员列表 |
-| POST | `/api/members` | 创建成员 |
-| GET | `/api/members/[id]` | 获取单个成员 |
-| PUT | `/api/members/[id]` | 更新成员 |
-| DELETE | `/api/members/[id]` | 删除成员 |
+| 方法   | 路径                  | 说明         |
+| ------ | --------------------- | ------------ |
+| GET    | `/api/members`      | 获取成员列表 |
+| POST   | `/api/members`      | 创建成员     |
+| GET    | `/api/members/[id]` | 获取单个成员 |
+| PUT    | `/api/members/[id]` | 更新成员     |
+| DELETE | `/api/members/[id]` | 删除成员     |
 
 ### 论文
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/papers` | 获取论文列表 |
-| POST | `/api/papers` | 创建论文 |
-| GET | `/api/papers/[id]` | 获取单篇论文 |
-| PUT | `/api/papers/[id]` | 更新论文 |
-| DELETE | `/api/papers/[id]` | 删除论文 |
+| 方法   | 路径                 | 说明         |
+| ------ | -------------------- | ------------ |
+| GET    | `/api/papers`      | 获取论文列表 |
+| POST   | `/api/papers`      | 创建论文     |
+| GET    | `/api/papers/[id]` | 获取单篇论文 |
+| PUT    | `/api/papers/[id]` | 更新论文     |
+| DELETE | `/api/papers/[id]` | 删除论文     |
 
 ### 专利
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/patents` | 获取专利列表 |
-| POST | `/api/patents` | 创建专利 |
-| GET | `/api/patents/[id]` | 获取单个专利 |
-| PUT | `/api/patents/[id]` | 更新专利 |
-| DELETE | `/api/patents/[id]` | 删除专利 |
+| 方法   | 路径                  | 说明         |
+| ------ | --------------------- | ------------ |
+| GET    | `/api/patents`      | 获取专利列表 |
+| POST   | `/api/patents`      | 创建专利     |
+| GET    | `/api/patents/[id]` | 获取单个专利 |
+| PUT    | `/api/patents/[id]` | 更新专利     |
+| DELETE | `/api/patents/[id]` | 删除专利     |
 
 ### 软件著作权
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/copyrights` | 获取软著列表 |
-| POST | `/api/copyrights` | 创建软著 |
-| GET | `/api/copyrights/[id]` | 获取单个软著 |
-| PUT | `/api/copyrights/[id]` | 更新软著 |
-| DELETE | `/api/copyrights/[id]` | 删除软著 |
+| 方法   | 路径                     | 说明         |
+| ------ | ------------------------ | ------------ |
+| GET    | `/api/copyrights`      | 获取软著列表 |
+| POST   | `/api/copyrights`      | 创建软著     |
+| GET    | `/api/copyrights/[id]` | 获取单个软著 |
+| PUT    | `/api/copyrights/[id]` | 更新软著     |
+| DELETE | `/api/copyrights/[id]` | 删除软著     |
 
 ### 获奖记录
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/awards` | 获取获奖列表 |
-| POST | `/api/awards` | 创建获奖 |
-| GET | `/api/awards/[id]` | 获取单个获奖 |
-| PUT | `/api/awards/[id]` | 更新获奖 |
-| DELETE | `/api/awards/[id]` | 删除获奖 |
+| 方法   | 路径                 | 说明         |
+| ------ | -------------------- | ------------ |
+| GET    | `/api/awards`      | 获取获奖列表 |
+| POST   | `/api/awards`      | 创建获奖     |
+| GET    | `/api/awards/[id]` | 获取单个获奖 |
+| PUT    | `/api/awards/[id]` | 更新获奖     |
+| DELETE | `/api/awards/[id]` | 删除获奖     |
 
 ### 科研项目
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/projects` | 获取项目列表 |
-| POST | `/api/projects` | 创建项目 |
-| GET | `/api/projects/[id]` | 获取单个项目 |
-| PUT | `/api/projects/[id]` | 更新项目 |
-| DELETE | `/api/projects/[id]` | 删除项目 |
-| POST | `/api/projects/[id]/progress` | 添加项目进展 |
+| 方法   | 路径                            | 说明         |
+| ------ | ------------------------------- | ------------ |
+| GET    | `/api/projects`               | 获取项目列表 |
+| POST   | `/api/projects`               | 创建项目     |
+| GET    | `/api/projects/[id]`          | 获取单个项目 |
+| PUT    | `/api/projects/[id]`          | 更新项目     |
+| DELETE | `/api/projects/[id]`          | 删除项目     |
+| POST   | `/api/projects/[id]/progress` | 添加项目进展 |
 
 ### 新闻动态
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/news` | 获取新闻列表（支持 ?category=&published= 筛选） |
-| POST | `/api/news` | 创建新闻 |
-| GET | `/api/news/[id]` | 获取单条新闻 |
-| PUT | `/api/news/[id]` | 更新新闻 |
-| DELETE | `/api/news/[id]` | 删除新闻 |
+| 方法   | 路径               | 说明                                            |
+| ------ | ------------------ | ----------------------------------------------- |
+| GET    | `/api/news`      | 获取新闻列表（支持 ?category=&published= 筛选） |
+| POST   | `/api/news`      | 创建新闻                                        |
+| GET    | `/api/news/[id]` | 获取单条新闻                                    |
+| PUT    | `/api/news/[id]` | 更新新闻                                        |
+| DELETE | `/api/news/[id]` | 删除新闻                                        |
 
 ### 算法资源
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/algorithms` | 获取算法列表 |
-| POST | `/api/algorithms` | 创建算法 |
-| GET | `/api/algorithms/[id]` | 获取单个算法 |
-| PUT | `/api/algorithms/[id]` | 更新算法 |
-| DELETE | `/api/algorithms/[id]` | 删除算法 |
+| 方法   | 路径                     | 说明         |
+| ------ | ------------------------ | ------------ |
+| GET    | `/api/algorithms`      | 获取算法列表 |
+| POST   | `/api/algorithms`      | 创建算法     |
+| GET    | `/api/algorithms/[id]` | 获取单个算法 |
+| PUT    | `/api/algorithms/[id]` | 更新算法     |
+| DELETE | `/api/algorithms/[id]` | 删除算法     |
 
 ### 网站设置
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/settings` | 获取所有设置 |
-| PUT | `/api/settings` | 批量更新设置 |
+| 方法 | 路径              | 说明         |
+| ---- | ----------------- | ------------ |
+| GET  | `/api/settings` | 获取所有设置 |
+| PUT  | `/api/settings` | 批量更新设置 |
 
 ## 页面路由
 
 ### 访客端
 
-| 路径 | 说明 |
-|------|------|
-| `/` | 首页 |
-| `/members` | 成员列表 |
-| `/members/[id]` | 成员详情 |
-| `/publications` | 科研成果（论文、专利、软著） |
-| `/projects` | 科研项目列表 |
-| `/projects/[id]` | 项目详情（含进展时间线） |
-| `/news` | 新闻动态列表 |
-| `/news/[id]` | 新闻详情 |
-| `/algorithms` | 算法资源 |
+| 路径               | 说明                         |
+| ------------------ | ---------------------------- |
+| `/`              | 首页                         |
+| `/members`       | 成员列表                     |
+| `/members/[id]`  | 成员详情                     |
+| `/publications`  | 科研成果（论文、专利、软著） |
+| `/projects`      | 科研项目列表                 |
+| `/projects/[id]` | 项目详情（含进展时间线）     |
+| `/news`          | 新闻动态列表                 |
+| `/news/[id]`     | 新闻详情                     |
+| `/algorithms`    | 算法资源                     |
 
 ### 管理后台
 
-| 路径 | 说明 |
-|------|------|
-| `/admin/login` | 登录 |
-| `/admin/register` | 注册 |
-| `/admin` | 后台首页 |
-| `/admin/members` | 成员管理 |
-| `/admin/members/new` | 添加成员 |
-| `/admin/members/[id]/edit` | 编辑成员 |
-| `/admin/papers` | 论文管理 |
-| `/admin/papers/new` | 添加论文 |
-| `/admin/papers/[id]/edit` | 编辑论文 |
-| `/admin/patents` | 专利管理 |
-| `/admin/patents/new` | 添加专利 |
-| `/admin/patents/[id]/edit` | 编辑专利 |
-| `/admin/copyrights` | 软著管理 |
-| `/admin/copyrights/new` | 添加软著 |
+| 路径                            | 说明     |
+| ------------------------------- | -------- |
+| `/admin/login`                | 登录     |
+| `/admin/register`             | 注册     |
+| `/admin`                      | 后台首页 |
+| `/admin/members`              | 成员管理 |
+| `/admin/members/new`          | 添加成员 |
+| `/admin/members/[id]/edit`    | 编辑成员 |
+| `/admin/papers`               | 论文管理 |
+| `/admin/papers/new`           | 添加论文 |
+| `/admin/papers/[id]/edit`     | 编辑论文 |
+| `/admin/patents`              | 专利管理 |
+| `/admin/patents/new`          | 添加专利 |
+| `/admin/patents/[id]/edit`    | 编辑专利 |
+| `/admin/copyrights`           | 软著管理 |
+| `/admin/copyrights/new`       | 添加软著 |
 | `/admin/copyrights/[id]/edit` | 编辑软著 |
-| `/admin/awards` | 获奖管理 |
-| `/admin/awards/new` | 添加获奖 |
-| `/admin/awards/[id]/edit` | 编辑获奖 |
-| `/admin/projects` | 项目管理 |
-| `/admin/projects/new` | 添加项目 |
-| `/admin/projects/[id]/edit` | 编辑项目 |
-| `/admin/news` | 新闻管理 |
-| `/admin/news/new` | 发布新闻 |
-| `/admin/news/[id]/edit` | 编辑新闻 |
-| `/admin/algorithms` | 算法管理 |
-| `/admin/algorithms/new` | 添加算法 |
+| `/admin/awards`               | 获奖管理 |
+| `/admin/awards/new`           | 添加获奖 |
+| `/admin/awards/[id]/edit`     | 编辑获奖 |
+| `/admin/projects`             | 项目管理 |
+| `/admin/projects/new`         | 添加项目 |
+| `/admin/projects/[id]/edit`   | 编辑项目 |
+| `/admin/news`                 | 新闻管理 |
+| `/admin/news/new`             | 发布新闻 |
+| `/admin/news/[id]/edit`       | 编辑新闻 |
+| `/admin/algorithms`           | 算法管理 |
+| `/admin/algorithms/new`       | 添加算法 |
 | `/admin/algorithms/[id]/edit` | 编辑算法 |
-| `/admin/settings` | 网站设置 |
+| `/admin/settings`             | 网站设置 |
 
 ## 认证与权限
 
 ### 角色
 
-| 角色 | 说明 |
-|------|------|
-| SUPER_ADMIN | 超级管理员，拥有所有权限 |
-| ADMIN | 管理员，可管理内容 |
-| MEMBER | 普通成员，可查看和录入自己的成果 |
+| 角色        | 说明                             |
+| ----------- | -------------------------------- |
+| SUPER_ADMIN | 超级管理员，拥有所有权限         |
+| ADMIN       | 管理员，可管理内容               |
+| MEMBER      | 普通成员，可查看和录入自己的成果 |
 
 ### 注册流程
 
@@ -523,4 +524,4 @@ npm run build
 
 ## 联系方式
 
-如有问题，请联系课题组管理员。
+如有问题，请联系苏诺。

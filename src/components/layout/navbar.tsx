@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
+import { Menu, X, User, LogOut } from "lucide-react";
 
 const navItems = [
   { label: "首页", href: "/" },
@@ -14,7 +15,13 @@ const navItems = [
 ];
 
 export function Navbar() {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+
+  const isAdmin =
+    session?.user &&
+    ((session.user as any).role === "SUPER_ADMIN" ||
+      (session.user as any).role === "ADMIN");
 
   return (
     <nav className="sticky top-0 z-50 glass-card border-b border-white/10">
@@ -35,12 +42,40 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/admin"
-              className="text-sm text-gray-500 hover:text-gray-400 transition-colors"
-            >
-              管理
-            </Link>
+
+            {session ? (
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+                >
+                  <User className="w-4 h-4" />
+                  个人中心
+                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="text-sm text-gray-500 hover:text-gray-400 transition-colors"
+                  >
+                    管理后台
+                  </Link>
+                )}
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-400 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  退出
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/admin/login"
+                className="text-sm text-gray-500 hover:text-gray-400 transition-colors"
+              >
+                登录
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -65,13 +100,43 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/admin"
-              className="block px-3 py-2 text-sm text-gray-500 hover:text-gray-400 hover:bg-white/5 rounded-lg transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              管理后台
-            </Link>
+            {session ? (
+              <>
+                <Link
+                  href="/profile"
+                  className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  个人中心
+                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="block px-3 py-2 text-sm text-gray-500 hover:text-gray-400 hover:bg-white/5 rounded-lg transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    管理后台
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    signOut({ callbackUrl: "/" });
+                  }}
+                  className="block w-full text-left px-3 py-2 text-sm text-gray-500 hover:text-gray-400 hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  退出登录
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/admin/login"
+                className="block px-3 py-2 text-sm text-gray-500 hover:text-gray-400 hover:bg-white/5 rounded-lg transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                登录
+              </Link>
+            )}
           </div>
         )}
       </div>
