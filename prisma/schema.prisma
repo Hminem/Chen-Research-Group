@@ -1,0 +1,393 @@
+// Prisma Schema for 陈老师课题组网站
+// 数据库：MySQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ==================== 用户与认证 ====================
+
+// 用户表（登录账号，含注册审核和角色）
+model User {
+  id             String    @id @default(cuid())
+  name           String
+  studentId      String?   @map("student_id")   // 学号/工号
+  email          String    @unique
+  password       String
+  role           Role      @default(MEMBER)
+  status         UserStatus @default(PENDING)   // 注册审核状态
+  avatarUrl      String?   @map("avatar_url")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  // 关联
+  member         Member?
+  submissions    Achievement[]       // 提交的成果
+  reviewedItems  Achievement[]       @relation("ReviewAchievement")  // 审核的成果
+  logs           OperationLog[]
+
+  @@map("users")
+}
+
+enum Role {
+  SUPER_ADMIN  // 超级管理员
+  ADMIN        // 管理员
+  MEMBER       // 普通成员
+}
+
+enum UserStatus {
+  PENDING      // 待审核
+  APPROVED     // 已通过
+  REJECTED     // 已拒绝
+}
+
+// ==================== 成员展示 ====================
+
+// 成员展示信息（与 User 一对一，展示用）
+model Member {
+  id                String    @id @default(cuid())
+  userId            String?   @unique @map("user_id")
+  name              String
+  title             MemberTitle
+  researchDirection String?   @map("research_direction")
+  bio               String?   @db.Text
+  email             String?
+  avatarUrl         String?   @map("avatar_url")
+  displayOrder      Int       @default(0) @map("display_order")
+  isGraduated       Boolean   @default(false) @map("is_graduated")
+  graduationYear    Int?      @map("graduation_year")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // 关联
+  user              User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  publications      Publication[]
+  projects          ProjectMember[]
+
+  @@map("members")
+}
+
+enum MemberTitle {
+  TEACHER    // 老师
+  PHD        // 博士生
+  MASTER     // 硕士生
+  ALUMNI     // 已毕业
+}
+
+// ==================== 科研成果 ====================
+
+// 论文
+model Publication {
+  id          String    @id @default(cuid())
+  title       String
+  authors     String
+  journal     String
+  year        Int
+  doi         String?
+  abstract    String?   @db.Text
+  status      ReviewStatus @default(APPROVED)  // 审核状态
+  submittedBy String?   @map("submitted_by")   // 提交人
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // 关联
+  member      Member?   @relation(fields: [submittedBy], references: [id])
+  projects    ProjectPublication[]
+
+  @@map("publications")
+}
+
+// 专利
+model Patent {
+  id                String    @id @default(cuid())
+  name              String
+  patentNumber      String    @map("patent_number")
+  patentType        PatentType @map("patent_type")
+  status            PatentStatus
+  applicationDate   DateTime? @map("application_date")
+  authorizationDate DateTime? @map("authorization_date")
+  inventors         String?
+  reviewStatus      ReviewStatus @default(APPROVED) @map("review_status")
+  submittedBy       String?   @map("submitted_by")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  projects          ProjectPatent[]
+
+  @@map("patents")
+}
+
+enum PatentType {
+  INVENTION      // 发明专利
+  UTILITY        // 实用新型
+  DESIGN         // 外观设计
+}
+
+enum PatentStatus {
+  APPLIED        // 申请中
+  AUTHORIZED     // 已授权
+}
+
+// 软件著作权
+model SoftwareCopyright {
+  id                String    @id @default(cuid())
+  name              String
+  registrationNumber String   @map("registration_number")
+  version           String?
+  registrationDate  DateTime? @map("registration_date")
+  reviewStatus      ReviewStatus @default(APPROVED) @map("review_status")
+  submittedBy       String?   @map("submitted_by")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  projects          ProjectCopyright[]
+
+  @@map("software_copyrights")
+}
+
+// 获奖记录
+model Award {
+  id            String    @id @default(cuid())
+  name          String                // 获奖名称
+  competition   String                // 赛事/评奖机构
+  level         AwardLevel            // 获奖等级
+  winners       String                // 获奖成员（逗号分隔）
+  year          Int
+  description   String?   @db.Text
+  imageUrl      String?   @map("image_url")  // 证书照片
+  reviewStatus  ReviewStatus @default(APPROVED) @map("review_status")
+  submittedBy   String?   @map("submitted_by")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  projects      ProjectAward[]
+
+  @@map("awards")
+}
+
+enum AwardLevel {
+  NATIONAL_FIRST     // 国家级一等奖
+  NATIONAL_SECOND    // 国家级二等奖
+  NATIONAL_THIRD     // 国家级三等奖
+  PROVINCIAL_FIRST   // 省部级一等奖
+  PROVINCIAL_SECOND  // 省部级二等奖
+  PROVINCIAL_THIRD   // 省部级三等奖
+  OTHER              // 其他
+}
+
+// 成果提交（统一审核入口）
+model Achievement {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  type        AchievementType
+  targetId    String    @map("target_id")  // 对应成果的ID
+  status      ReviewStatus @default(PENDING)
+  reviewerId  String?   @map("reviewer_id")
+  reviewNote  String?   @map("review_note") @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user        User      @relation(fields: [userId], references: [id])
+  reviewer    User?     @relation("ReviewAchievement", fields: [reviewerId], references: [id])
+
+  @@map("achievements")
+}
+
+enum AchievementType {
+  PUBLICATION
+  PATENT
+  COPYRIGHT
+  AWARD
+}
+
+enum ReviewStatus {
+  PENDING      // 待审核
+  APPROVED     // 已通过
+  REJECTED     // 已拒绝
+}
+
+// ==================== 算法资源 ====================
+
+model Algorithm {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?   @db.Text
+  useCases        String?   @map("use_cases") @db.Text
+  relatedPaperId  String?   @map("related_paper_id")
+  fileUrl         String?   @map("file_url")
+  fileName        String?   @map("file_name")
+  readmeContent   String?   @map("readme_content") @db.Text
+  isPublic        Boolean   @default(true) @map("is_public")  // 是否公开下载
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@map("algorithms")
+}
+
+// ==================== 科研项目 ====================
+
+model Project {
+  id            String    @id @default(cuid())
+  name          String
+  leader        String                // 负责人
+  fundingSource String?   @map("funding_source")  // 资助来源
+  fundingAmount Float?    @map("funding_amount")  // 资助金额
+  startDate     DateTime? @map("start_date")
+  endDate       DateTime? @map("end_date")
+  status        ProjectStatus @default(ONGOING)
+  description   String?   @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // 关联
+  members       ProjectMember[]
+  progress      ProjectProgress[]
+  publications  ProjectPublication[]
+  patents       ProjectPatent[]
+  copyrights    ProjectCopyright[]
+  awards        ProjectAward[]
+
+  @@map("projects")
+}
+
+enum ProjectStatus {
+  ONGOING      // 进行中
+  COMPLETED    // 已结题
+  SUSPENDED    // 已暂停
+}
+
+// 项目成员
+model ProjectMember {
+  id        String @id @default(cuid())
+  projectId String @map("project_id")
+  memberId  String @map("member_id")
+  role      String?  // 在项目中的角色
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  member    Member  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, memberId])
+  @@map("project_members")
+}
+
+// 项目进展
+model ProjectProgress {
+  id          String    @id @default(cuid())
+  projectId   String    @map("project_id")
+  title       String
+  content     String    @db.Text
+  progressDate DateTime @map("progress_date")
+  attachments String?   @db.Text  // JSON array of file URLs
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_progress")
+}
+
+// 项目-论文关联
+model ProjectPublication {
+  id            String @id @default(cuid())
+  projectId     String @map("project_id")
+  publicationId String @map("publication_id")
+
+  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, publicationId])
+  @@map("project_publications")
+}
+
+// 项目-专利关联
+model ProjectPatent {
+  id        String @id @default(cuid())
+  projectId String @map("project_id")
+  patentId  String @map("patent_id")
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  patent    Patent  @relation(fields: [patentId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, patentId])
+  @@map("project_patents")
+}
+
+// 项目-软著关联
+model ProjectCopyright {
+  id          String @id @default(cuid())
+  projectId   String @map("project_id")
+  copyrightId String @map("copyright_id")
+
+  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  copyright   SoftwareCopyright @relation(fields: [copyrightId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, copyrightId])
+  @@map("project_copyrights")
+}
+
+// 项目-获奖关联
+model ProjectAward {
+  id        String @id @default(cuid())
+  projectId String @map("project_id")
+  awardId   String @map("award_id")
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  award     Award   @relation(fields: [awardId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, awardId])
+  @@map("project_awards")
+}
+
+// ==================== 新闻动态 ====================
+
+model News {
+  id          String    @id @default(cuid())
+  title       String
+  summary     String?   @db.Text
+  content     String    @db.Text              // 富文本内容
+  category    NewsCategory @default(GROUP)
+  coverImage  String?   @map("cover_image")
+  isPublished Boolean   @default(false) @map("is_published")
+  authorId    String?   @map("author_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("news")
+}
+
+enum NewsCategory {
+  GROUP        // 组内新闻
+  ACADEMIC     // 学术动态
+  AWARD        // 获奖通知
+}
+
+// ==================== 网站配置 ====================
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}
+
+// ==================== 操作日志 ====================
+
+model OperationLog {
+  id        String   @id @default(cuid())
+  userId    String?  @map("user_id")
+  action    String                 // 操作类型：CREATE, UPDATE, DELETE
+  module    String                 // 模块：member, publication, patent 等
+  targetId  String?  @map("target_id")
+  detail    String?  @db.Text      // 操作详情
+  ip        String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("operation_logs")
+}
