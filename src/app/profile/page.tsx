@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { User, Mail, CreditCard, Shield, Clock } from "lucide-react";
+import Link from "next/link";
+import { User, Mail, CreditCard, Shield, Clock, FileText, Plus } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 
@@ -207,6 +208,22 @@ export default function ProfilePage() {
                   >
                     {statusMap[profile.status] || profile.status}
                   </span>
+                </div>
+                <div className="mt-4 space-y-2">
+                  <Link
+                    href="/profile/submissions"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-sm"
+                  >
+                    <FileText className="w-4 h-4" />
+                    我的成果
+                  </Link>
+                  <Link
+                    href="/profile/submissions/new"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded-lg transition-colors text-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                    提交新成果
+                  </Link>
                 </div>
               </div>
             </motion.div>

@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Users, FileText, Award, Code, FileCode, Settings, LogOut, Newspaper, FolderOpen, Trophy, UserCog } from "lucide-react";
+import { Users, FileText, Award, Code, FileCode, Settings, LogOut, Newspaper, FolderOpen, Trophy, UserCog, ClipboardCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const adminMenus = [
   { label: "用户审核", href: "/admin/users", icon: UserCog, description: "审核注册用户，分配角色权限" },
+  { label: "成果审核", href: "/admin/submissions", icon: ClipboardCheck, description: "审核用户提交的论文、专利、软著和获奖" },
   { label: "成员管理", href: "/admin/members", icon: Users, description: "管理团队成员信息" },
   { label: "论文管理", href: "/admin/papers", icon: FileText, description: "管理学术论文" },
   { label: "专利管理", href: "/admin/patents", icon: Award, description: "管理专利信息" },
